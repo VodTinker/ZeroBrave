@@ -1,0 +1,116 @@
+{
+  // ===== DESHABILITAR MierdIA =====
+  "BraveAIChatEnabled": false,           // Leo AI deshabilitado
+  "HelpMeWriteSettings": 2,              // 2=Disabled
+  "GeminiSettings": 1,                   // 1=Never allow
+  "GenAiDefaultSettings": 2,             // 2=Never allow
+  "GenAiLensOverlaySettings": 2,         // 2=Disabled
+  "GenAILocalFoundationalModelSettings": 1, // 1=Never allow
+  "LensRegionSearchEnabled": false,
+  "LensDesktopNTPSearchEnabled": false,
+  "LensOverlaySettings": 1,              // 1=Never allow
+  
+  // ===== PRIVACIDAD =====
+  "BlockThirdPartyCookies": true,
+  "PrivacySandboxFingerprintingProtectionEnabled": true,
+  "PrivacySandboxPromptEnabled": false,
+  "PrivacySandboxAdTopicsEnabled": false,
+  "PrivacySandboxSiteEnabledAdsEnabled": false,
+  "PrivacySandboxAdMeasurementEnabled": false,
+  "WebRtcIPHandling": "disable_non_proxied_udp",
+  "WebRtcEventLogCollectionAllowed": false,
+  "DnsOverHttpsMode": "off",
+  
+  // ===== SEGURIDAD =====
+  "SafeBrowsingProtectionLevel": 1,      // 0=Standard, 1=Enhanced, 2=Disabled
+  "SafeBrowsingExtendedReportingEnabled": false,
+  "SafeBrowsingSurveysEnabled": false,
+  
+  // ===== TELEMETRÍA =====
+  "MetricsReportingEnabled": false,
+  "DeviceMetricsReportingEnabled": false,
+  "UrlKeyedAnonymizedDataCollectionEnabled": false,
+  "UrlKeyedMetricsAllowed": false,
+  "CloudProfileReportingEnabled": false,
+  "CloudReportingEnabled": false,
+  "ReportExtensionsAndPluginsData": false,
+  "ReportMachineIDData": false,
+  "ReportPolicyData": false,
+  "ReportUserIDData": false,
+  "ReportVersionData": false,
+  "UserFeedbackAllowed": false,
+  "FeedbackSurveysEnabled": false,
+  
+  // ===== LIMPIEZA DE DATOS =====
+  "UserDataSnapshotRetentionLimit": 0,   // 0=No retention
+  
+  // ===== PAGOS Y FINANZAS =====
+  "PaymentMethodQueryEnabled": false,
+  "AutofillPredictionSettings": 2,       // 2=Never
+  
+  // ===== AUTOFILL Y CONTRASEÑAS =====
+  "AutofillAddressEnabled": false,
+  "AutofillCreditCardEnabled": false,
+  "PasswordManagerEnabled": false,
+  "PasswordLeakDetectionEnabled": false,
+  "PasswordSharingEnabled": false,
+  
+  // ===== SYNC Y CUENTA =====
+  "SyncDisabled": true,
+  "BrowserSignin": 0,                    // 0=Disabled
+  
+  // ===== MEDIA Y RECOMENDACIONES =====
+  "MediaRecommendationsEnabled": false,
+  "PromotionalTabsEnabled": false,
+  "PromotionsEnabled": false,
+  
+  // ===== NETWORK =====
+  "QuicAllowed": false,
+  "NetworkPredictionOptions": 2,         // 2=Never predict
+  "SearchSuggestEnabled": false,
+  
+  // ===== HERRAMIENTAS =====
+  "SpellcheckEnabled": false,
+  "SpellCheckServiceEnabled": false,
+  "TranslateEnabled": false,
+  "EnableMediaRouter": false,
+  "ShoppingListEnabled": false,
+  
+  // ===== SISTEMA =====
+  "BackgroundModeEnabled": false,
+  "ComponentUpdatesEnabled": false,
+  "SuppressUnsupportedOSWarning": true,
+  
+  // ===== BRAVE ESPECÍFICO =====
+  "BraveRewardsDisabled": true,
+  "BraveWalletDisabled": true,
+  "BraveVPNDisabled": 1,                 // 1=Disabled
+  "TorDisabled": true,                   // Cambia a false si quieres Tor
+  
+  // ===== RENDIMIENTO =====
+  "DiskCacheSize": 1048576,              // 1MB cache
+  "MemorySaverModeSavings": 1,           // 1=Aggressive savings
+  
+  // ===== COOKIES Y PERMISOS =====
+  "DefaultCookiesSetting": 4,            // 4=Block third party
+  "CookiesSessionOnlyForUrls": ["[*.]*"],
+  "DefaultJavaScriptSetting": 1,
+  "DefaultGeolocationSetting": 2,
+  "DefaultNotificationsSetting": 2,
+  "DefaultWebBluetoothGuardSetting": 2,
+  "DefaultWebUsbGuardSetting": 2,
+  "DefaultFileSystemReadGuardSetting": 2,
+  "DefaultFileSystemWriteGuardSetting": 2,
+  "DefaultLocalFontsSetting": 2,
+  "DefaultSensorsSetting": 2,
+  "DefaultSerialGuardSetting": 2,
+  
+  // ===== CERTIFICADOS =====
+  "CertificateTransparencyEnforcementDisabledForUrls": ["[*.]*"],
+  
+  // ===== BUSQUEDA =====
+  "DefaultSearchProviderEnabled": false,
+  
+  // ===== AUTOPLAY =====
+  "AutoplayAllowed": false
+}
