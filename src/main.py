@@ -10,7 +10,7 @@ def get_policy_path() -> Path:
     if system == "windows":
         return Path(r"C:\Program Files\BraveSoftware\Brave-Browser\Application\policy\managed\policies.json")
     elif system == "linux":
-        return Path("/etc/opt/brave/policies/managed/policies.json")
+        return Path("/etc/brave/policies/managed/policies.json")
     else:
         raise RuntimeError(f"Unsupported operating system: {system}")
 
