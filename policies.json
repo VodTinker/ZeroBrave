@@ -18,7 +18,7 @@
   "PrivacySandboxAdMeasurementEnabled": false, // Disable ad measurement/attribution
   "WebRtcIPHandling": "disable_non_proxied_udp", // Prevent WebRTC IP leaks
   "WebRtcEventLogCollectionAllowed": false, // Disable WebRTC event logging
-  "DnsOverHttpsMode": "off", // Disable built-in DoH (if you don't have a custom DoH/DoQ/DoT set to automatic)
+  "DnsOverHttpsMode": "off", // Disable built-in DoH (set to "automatic" if you don't have a custom DNS server)
   // ===== SECURITY =====
   "SafeBrowsingProtectionLevel": 2, // 2=Enhanced protection (1=Standard, 0=Disabled)
   "SafeBrowsingExtendedReportingEnabled": false, // Don't send browsing data to Google
