@@ -6,6 +6,7 @@ Ideas and features planned for future versions.
 
 ### Terminal User Interface
 - [x] Create interactive TUI using `rich`
+- [x] TUI launches by default (auto-detection)
 - [x] 8 policy categories with toggle controls (1-8)
 - [x] Visual preview of changes before applying (P)
 - [x] Keyboard navigation with simple commands

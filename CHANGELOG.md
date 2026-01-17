@@ -5,7 +5,8 @@ All notable changes to ZeroBrave will be documented in this file.
 ## [1.2.0] - 2026-01-17 (by @vodtinker)
 
 ### Added
-- **Interactive TUI** with `rich` library (`--interactive` / `-i` flag)
+- **Interactive TUI** with `rich` library - now launches by default!
+- Auto-detection: TUI starts automatically in interactive terminals
 - 3D ASCII banner with intro/exit animations
 - 8 policy categories with toggle controls (keys 1-8)
 - **Predefined profiles**: Strict (S), Balanced (B), Minimal (M)
