@@ -2,7 +2,7 @@
 """
 ZeroBrave TUI - Interactive Terminal User Interface.
 
-Professional look with ASCII symbols and smooth animations.
+Professional look with ASCII symbols, animations, profiles, and help system.
 """
 
 from dataclasses import dataclass
@@ -16,7 +16,6 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
-from rich.live import Live
 from rich import box
 
 # 3D ASCII Banner
@@ -30,9 +29,30 @@ BANNER = """[bold cyan]
                     [bold yellow]Privacy-First Brave Configuration[/]
 """
 
-# Categories with ASCII tags
+# Predefined profiles
+PROFILES = {
+    "strict": {
+        "name": "Strict",
+        "desc": "Maximum privacy - all protections enabled",
+        "categories": ["ai", "privacy", "telemetry", "security", "autofill", "sync", "perms", "brave"]
+    },
+    "balanced": {
+        "name": "Balanced",
+        "desc": "Good privacy with some convenience",
+        "categories": ["ai", "privacy", "telemetry", "security", "sync", "brave"]
+    },
+    "minimal": {
+        "name": "Minimal",
+        "desc": "Basic privacy - only essentials",
+        "categories": ["ai", "telemetry", "brave"]
+    },
+}
+
+# Categories with ASCII tags and help text
 CATEGORIES = [
-    ("ai", "[AI]", "Disable AI Features", "Leo, Gemini, Lens, AI Writing", {
+    ("ai", "[AI]", "Disable AI Features", "Leo, Gemini, Lens, AI Writing", 
+     "Disables all AI assistants including Leo (Brave's AI), Google Gemini integration, "
+     "Google Lens features, and AI-powered writing helpers.", {
         "BraveAIChatEnabled": False,
         "HelpMeWriteSettings": 2,
         "GeminiSettings": 1,
@@ -43,7 +63,9 @@ CATEGORIES = [
         "LensDesktopNTPSearchEnabled": False,
         "LensOverlaySettings": 1,
     }),
-    ("privacy", "[PRIV]", "Block Tracking", "Cookies, Fingerprinting, WebRTC", {
+    ("privacy", "[PRIV]", "Block Tracking", "Cookies, Fingerprinting, WebRTC",
+     "Blocks third-party cookies, enables fingerprinting protection, disables Privacy Sandbox, "
+     "and prevents WebRTC IP leaks for enhanced privacy.", {
         "BlockThirdPartyCookies": True,
         "PrivacySandboxFingerprintingProtectionEnabled": True,
         "PrivacySandboxPromptEnabled": False,
@@ -53,7 +75,9 @@ CATEGORIES = [
         "WebRtcIPHandling": "disable_non_proxied_udp",
         "WebRtcEventLogCollectionAllowed": False,
     }),
-    ("telemetry", "[TEL]", "Disable Telemetry", "Metrics, Reports, Feedback", {
+    ("telemetry", "[TEL]", "Disable Telemetry", "Metrics, Reports, Feedback",
+     "Completely disables all telemetry, usage statistics, crash reports, "
+     "and feedback mechanisms. No data sent to Brave or Google.", {
         "MetricsReportingEnabled": False,
         "DeviceMetricsReportingEnabled": False,
         "UrlKeyedAnonymizedDataCollectionEnabled": False,
@@ -68,13 +92,17 @@ CATEGORIES = [
         "UserFeedbackAllowed": False,
         "FeedbackSurveysEnabled": False,
     }),
-    ("security", "[SEC]", "Enhanced Security", "Safe Browsing, Updates", {
+    ("security", "[SEC]", "Enhanced Security", "Safe Browsing, Updates",
+     "Enables Enhanced Safe Browsing (level 2) for better protection against "
+     "phishing and malware. Keeps component updates enabled for security patches.", {
         "SafeBrowsingProtectionLevel": 2,
         "SafeBrowsingExtendedReportingEnabled": False,
         "SafeBrowsingSurveysEnabled": False,
         "ComponentUpdatesEnabled": True,
     }),
-    ("autofill", "[AUTO]", "Disable Autofill", "Passwords, Payments, Addresses", {
+    ("autofill", "[AUTO]", "Disable Autofill", "Passwords, Payments, Addresses",
+     "Disables all autofill features including password manager, credit cards, "
+     "and addresses. Use a dedicated password manager instead.", {
         "PaymentMethodQueryEnabled": False,
         "AutofillAddressEnabled": False,
         "AutofillCreditCardEnabled": False,
@@ -83,11 +111,15 @@ CATEGORIES = [
         "PasswordLeakDetectionEnabled": False,
         "PasswordSharingEnabled": False,
     }),
-    ("sync", "[SYNC]", "Disable Sync", "No Cloud, No Sign-in", {
+    ("sync", "[SYNC]", "Disable Sync", "No Cloud, No Sign-in",
+     "Prevents browser sync and sign-in. Your data stays local and is never "
+     "uploaded to Brave's servers.", {
         "SyncDisabled": True,
         "BrowserSignin": 0,
     }),
-    ("perms", "[PERM]", "Block Permissions", "Location, Notifications, USB", {
+    ("perms", "[PERM]", "Block Permissions", "Location, Notifications, USB",
+     "Sets all sensitive permissions to 'blocked by default'. Sites cannot access "
+     "your location, send notifications, or connect to hardware without explicit permission.", {
         "DefaultGeolocationSetting": 2,
         "DefaultNotificationsSetting": 2,
         "DefaultWebBluetoothGuardSetting": 2,
@@ -97,27 +129,37 @@ CATEGORIES = [
         "DefaultLocalFontsSetting": 2,
         "DefaultSensorsSetting": 2,
         "DefaultSerialGuardSetting": 2,
+        "DefaultCameraAccessAllowed": False,
+        "DefaultMicAccessAllowed": False,
+        "ScreenCaptureAllowed": False,
         "AutoplayAllowed": False,
     }),
-    ("brave", "[BRAVE]", "Brave Specific", "Rewards, Wallet, VPN disabled", {
+    ("brave", "[BRAVE]", "Brave Specific", "Rewards, Wallet, VPN, Talk",
+     "Disables Brave-specific features: Rewards/BAT tokens, crypto wallet, "
+     "VPN promotions, and Brave Talk video calls.", {
         "BraveRewardsDisabled": True,
         "BraveWalletDisabled": True,
         "BraveVPNDisabled": 1,
         "TorDisabled": True,
+        "BraveTalkEnabled": False,
     }),
 ]
 
 
 class TUI:
-    """Professional TUI with animations for ZeroBrave."""
+    """Professional TUI with profiles, help, and animations."""
     
     def __init__(self, dry_run: bool = False, backup_callback: Callable = None, 
                  apply_callback: Callable = None):
-        self.console = Console()
+        # Respect NO_COLOR environment variable
+        no_color = os.environ.get("NO_COLOR") is not None
+        self.console = Console(no_color=no_color)
         self.dry_run = dry_run
         self.backup_callback = backup_callback
         self.apply_callback = apply_callback
         self.enabled = {cat[0]: True for cat in CATEGORIES}
+        self.current_profile = "strict"  # Default profile
+        self.changes_made = 0  # Track changes this session
     
     def clear(self):
         """Clear screen."""
@@ -125,7 +167,6 @@ class TUI:
     
     def animate_banner(self):
         """Animate the banner appearing."""
-        # Print banner lines as plain text for animation
         banner_plain = """
  ███████╗███████╗██████╗  ██████╗ ██████╗ ██████╗  █████╗ ██╗   ██╗███████╗
  ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔══██╗██║   ██║██╔════╝
@@ -143,7 +184,6 @@ class TUI:
         """Animate program startup."""
         self.clear()
         
-        # Loading animation
         with Progress(
             SpinnerColumn("dots12"),
             TextColumn("[bold cyan]Initializing ZeroBrave...[/]"),
@@ -177,10 +217,27 @@ class TUI:
         ))
         time.sleep(0.3)
     
+    def apply_profile(self, profile_key: str):
+        """Apply a predefined profile."""
+        if profile_key not in PROFILES:
+            return
+        
+        profile = PROFILES[profile_key]
+        enabled_cats = profile["categories"]
+        
+        for cat_key, *_ in CATEGORIES:
+            old_state = self.enabled[cat_key]
+            new_state = cat_key in enabled_cats
+            if old_state != new_state:
+                self.changes_made += 1
+            self.enabled[cat_key] = new_state
+        
+        self.current_profile = profile_key
+    
     def build_policies(self) -> dict:
         """Build policies dict from enabled categories."""
         result = {}
-        for key, tag, name, desc, policies in CATEGORIES:
+        for key, tag, name, desc, help_text, policies in CATEGORIES:
             if self.enabled[key]:
                 result.update(policies)
         return result
@@ -188,8 +245,26 @@ class TUI:
     def count_enabled(self) -> tuple[int, int]:
         """Count (enabled_categories, total_policies)."""
         enabled = sum(1 for k, v in self.enabled.items() if v)
-        policies = sum(len(cat[4]) for cat in CATEGORIES if self.enabled[cat[0]])
+        policies = sum(len(cat[5]) for cat in CATEGORIES if self.enabled[cat[0]])
         return enabled, policies
+    
+    def render_profiles(self) -> Table:
+        """Render profile selector."""
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 2))
+        table.add_column("Key", style="bold cyan", width=3)
+        table.add_column("Profile", width=12)
+        table.add_column("Description", style="dim")
+        
+        for i, (key, data) in enumerate(PROFILES.items(), 1):
+            if key == self.current_profile:
+                prefix = "[bold green]>>[/]"
+                style = "bold green"
+            else:
+                prefix = "  "
+                style = ""
+            table.add_row(f"F{i}", f"[{style}]{data['name']}[/]", data['desc'])
+        
+        return table
     
     def render_table(self):
         """Render the categories table."""
@@ -200,7 +275,7 @@ class TUI:
         table.add_column("Category", width=20)
         table.add_column("Details", style="dim")
         
-        for i, (key, tag, name, desc, policies) in enumerate(CATEGORIES, 1):
+        for i, (key, tag, name, desc, help_text, policies) in enumerate(CATEGORIES, 1):
             if self.enabled[key]:
                 status = "[bold green]++ ON[/]"
                 tag_style = f"[cyan]{tag}[/]"
@@ -223,13 +298,32 @@ class TUI:
         
         enabled_cats, total_policies = self.count_enabled()
         
-        # Status bar
-        status_text = f"[bold]Categories: {enabled_cats}/8[/]  |  [bold]Policies: {total_policies}[/]"
-        if self.dry_run:
-            status_text = "[bold yellow]>> DRY-RUN MODE <<[/]  |  " + status_text
+        # Status bar with profile and changes indicator
+        profile_name = PROFILES[self.current_profile]["name"]
+        status_parts = [
+            f"[bold]Profile: {profile_name}[/]",
+            f"[bold]Categories: {enabled_cats}/8[/]",
+            f"[bold]Policies: {total_policies}[/]",
+        ]
         
-        self.console.print(Panel(status_text, box=box.MINIMAL))
+        if self.changes_made > 0:
+            status_parts.append(f"[yellow]Changes: {self.changes_made}[/]")
+        
+        if self.dry_run:
+            status_parts.insert(0, "[bold yellow]>> DRY-RUN <<[/]")
+        
+        self.console.print(Panel(" | ".join(status_parts), box=box.MINIMAL))
         self.console.print()
+        
+        # Profiles bar
+        self.console.print("[bold]Profiles:[/] ", end="")
+        for key, data in PROFILES.items():
+            letter = key[0].upper()  # S, B, M
+            if key == self.current_profile:
+                self.console.print(f"[bold green][{letter}] {data['name']}[/]", end="  ")
+            else:
+                self.console.print(f"[dim][{letter}] {data['name']}[/]", end="  ")
+        self.console.print("\n")
         
         # Categories table
         self.console.print(self.render_table())
@@ -238,16 +332,68 @@ class TUI:
         # Commands
         cmd_panel = Panel(
             "[cyan]1-8[/] Toggle  |  "
-            "[cyan]A[/] All ON/OFF  |  "
-            "[cyan]P[/] Preview  |  "
+            "[cyan]S[/]trict [cyan]B[/]alanced [cyan]M[/]inimal  |  "
+            "[cyan]?[/] Help  |  "
+            "[cyan]A[/]ll  |  "
+            "[cyan]P[/]review  |  "
             "[green]ENTER[/] Apply  |  "
-            "[red]Q[/] Quit",
+            "[red]Q[/]uit",
             title="[bold]Commands[/]",
             border_style="dim cyan",
             box=box.ROUNDED,
         )
         self.console.print(cmd_panel)
         self.console.print()
+    
+    def show_help(self, category_num: int = None):
+        """Show contextual help."""
+        self.clear()
+        self.console.print(BANNER)
+        
+        if category_num and 1 <= category_num <= 8:
+            # Show specific category help
+            key, tag, name, desc, help_text, policies = CATEGORIES[category_num - 1]
+            
+            self.console.print(Panel(
+                f"[bold]{tag} {name}[/]\n\n"
+                f"{help_text}\n\n"
+                f"[dim]Policies ({len(policies)}):[/]\n" +
+                "\n".join(f"  • {p}" for p in list(policies.keys())[:10]) +
+                ("\n  ..." if len(policies) > 10 else ""),
+                title=f"[bold cyan]Help: Category {category_num}[/]",
+                border_style="cyan",
+            ))
+        else:
+            # Show general help
+            help_text = """
+[bold cyan]ZeroBrave TUI - Help[/]
+
+[bold]Navigation:[/]
+  [cyan]1-8[/]      Toggle individual categories ON/OFF
+  [cyan]S[/]        Apply 'Strict' profile (maximum privacy)
+  [cyan]B[/]        Apply 'Balanced' profile (privacy + convenience)
+  [cyan]M[/]        Apply 'Minimal' profile (essential only)
+  [cyan]A[/]        Toggle ALL categories ON/OFF
+  [cyan]P[/]        Preview JSON policies
+  [cyan]ENTER[/]    Apply policies to Brave
+  [cyan]Q[/]        Quit without applying
+  [cyan]?[/]        Show this help
+  [cyan]?1-8[/]     Show help for specific category
+
+[bold]Profiles:[/]
+  [green]Strict[/]    - All 8 categories enabled (maximum privacy)
+  [yellow]Balanced[/]  - 6 categories (keeps autofill, permissions optional)
+  [dim]Minimal[/]   - 3 categories (AI, telemetry, Brave-specific only)
+
+[bold]Tips:[/]
+  • Changes require restarting Brave to take effect
+  • Use --dry-run to preview without applying
+  • Policies are enforced and cannot be changed by users
+"""
+            self.console.print(Panel(help_text, title="[bold]Help[/]", border_style="cyan"))
+        
+        self.console.print()
+        input("Press ENTER to go back...")
     
     def show_preview(self):
         """Show JSON preview with animation."""
@@ -256,7 +402,6 @@ class TUI:
         
         policies = self.build_policies()
         
-        # Loading animation
         with Progress(
             SpinnerColumn(),
             TextColumn("[bold cyan]Generating preview..."),
@@ -286,7 +431,6 @@ class TUI:
         if self.dry_run:
             self.console.print("[bold yellow]>> DRY-RUN: Simulating apply...[/]\n")
         
-        # Progress animation
         with Progress(
             SpinnerColumn("dots"),
             TextColumn("[bold]{task.description}"),
@@ -317,6 +461,7 @@ class TUI:
                     border_style="green",
                     box=box.DOUBLE,
                 ))
+                self.changes_made = 0  # Reset changes counter
             except Exception as e:
                 self.console.print(f"\n[bold red]ERROR:[/] {e}")
         else:
@@ -329,21 +474,20 @@ class TUI:
         """Toggle a category with visual feedback."""
         if 1 <= idx <= 8:
             key = CATEGORIES[idx - 1][0]
-            tag = CATEGORIES[idx - 1][1]
             self.enabled[key] = not self.enabled[key]
+            self.changes_made += 1
+            self.current_profile = "custom"  # No longer matches a profile
             
-            # Quick flash feedback
             status = "[green]ON[/]" if self.enabled[key] else "[red]OFF[/]"
-            self.console.print(f"  {tag} -> {status}", highlight=False)
+            self.console.print(f"  {CATEGORIES[idx - 1][1]} -> {status}", highlight=False)
             time.sleep(0.1)
     
     def run(self):
         """Main loop."""
-        # Intro animation
         self.animate_intro()
         time.sleep(0.2)
         
-        first_render = False  # Already showed banner in intro
+        first_render = False
         
         while True:
             self.render(animate=first_render)
@@ -362,11 +506,25 @@ class TUI:
                 self.show_preview()
             elif choice == '' or choice == 'enter':
                 self.apply()
+            elif choice == '?':
+                self.show_help()
+            elif choice.startswith('?') and len(choice) == 2 and choice[1].isdigit():
+                self.show_help(int(choice[1]))
             elif choice == 'a':
                 if any(self.enabled.values()):
-                    self.enabled = {k: False for k in self.enabled}
+                    for k in self.enabled:
+                        self.enabled[k] = False
                 else:
-                    self.enabled = {k: True for k in self.enabled}
+                    for k in self.enabled:
+                        self.enabled[k] = True
+                self.changes_made += 1
+                self.current_profile = "custom"
+            elif choice == 's':
+                self.apply_profile("strict")
+            elif choice == 'b':
+                self.apply_profile("balanced")
+            elif choice == 'm':
+                self.apply_profile("minimal")
             elif choice.isdigit():
                 self.toggle_with_feedback(int(choice))
 
