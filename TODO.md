@@ -2,14 +2,14 @@
 
 Ideas and features planned for future versions.
 
-## v1.2.0 - Interactive TUI (for more friendly use)
+## v1.2.0 - Interactive TUI ✅ COMPLETED
 
 ### Terminal User Interface
-- [ ] Create interactive TUI using `rich` or `textual`
-- [ ] Toggle options for each policy category
-- [ ] Visual preview of changes before applying
-- [ ] Keyboard navigation (arrow keys, hotkeys)
-- [ ] Works over SSH and headless servers
+- [x] Create interactive TUI using `rich` or `textual`
+- [x] Toggle options for each policy category
+- [x] Visual preview of changes before applying
+- [x] Keyboard navigation (arrow keys, hotkeys)
+- [x] Works over SSH and headless servers
 
 ### TUI Mockup
 ```

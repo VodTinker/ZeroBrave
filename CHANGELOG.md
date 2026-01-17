@@ -2,6 +2,19 @@
 
 All notable changes to ZeroBrave will be documented in this file.
 
+## [1.2.0] - 2026-01-17 (by @vodtinker)
+
+### Added
+- **Interactive TUI** with `rich` library (`--interactive` / `-i` flag)
+- 3D ASCII banner for the TUI interface
+- 8 policy categories with toggle controls
+- Live preview of JSON policies before applying
+- Keyboard navigation (↑↓←→, Space, Enter)
+- Hotkeys: [A]pply, [B]ackup, [P]review, [Q]uit
+
+### Changed
+- New dependency: `rich>=13.0.0`
+
 ## [1.1.2] - 2026-01-17 (by @vodtinker)
 
 ### Added

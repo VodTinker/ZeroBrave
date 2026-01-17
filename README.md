@@ -1,4 +1,4 @@
-# ZeroBrave **v1.1.2**
+# ZeroBrave **v1.2.0**
 
 Privacy-focused policy configurator for **Brave Browser**. Disables telemetry, AI features (Leo), and other privacy-invasive settings automatically.
 
@@ -11,6 +11,7 @@ Privacy-focused policy configurator for **Brave Browser**. Disables telemetry, A
 - Prevents sync and browser sign-in
 - Performance optimizations (memory saver, reduced cache)
 - Multi-platform support (Linux, Windows, macOS)
+- **NEW: Interactive TUI for easy configuration**
 
 ## Installation
 
@@ -35,6 +36,29 @@ sudo python3 src/main.py
 
 ## Usage
 
+### Interactive Mode (NEW in v1.2.0)
+
+```bash
+# Launch the interactive TUI
+python3 src/main.py --interactive
+
+# TUI with dry-run (preview changes)
+python3 src/main.py -i --dry-run
+```
+
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║   ███████╗███████╗██████╗  ██████╗ ██████╗ ██████╗  █████╗ ██╗   ██╗███████╗  ║
+║   ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔══██╗██║   ██║██╔════╝  ║
+║     ███╔╝ █████╗  ██████╔╝██║   ██║██████╔╝██████╔╝███████║██║   ██║█████╗    ║
+║    ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██╔══██╗██╔══██╗██╔══██║╚██╗ ██╔╝██╔══╝    ║
+║   ███████╗███████╗██║  ██║╚██████╔╝██████╔╝██║  ██║██║  ██║ ╚████╔╝ ███████╗  ║
+║   ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝  ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+```
+
+### CLI Mode
+
 ```bash
 # Apply policies (requires sudo/admin)
 sudo python3 src/main.py
@@ -56,6 +80,7 @@ sudo python3 src/main.py --local ./my-policies.json
 
 | Option | Description |
 |--------|-------------|
+| `-i, --interactive` | Launch interactive TUI for policy configuration |
 | `-n, --dry-run` | Show what would be done without making changes |
 | `-b, --backup` | Create backup of existing policies |
 | `-r, --restore` | Restore the most recent backup |
