@@ -23,9 +23,6 @@ import urllib.request
 
 __version__ = "1.2.0"
 
-SOURCE_URL = "https://raw.githubusercontent.com/rompelhd/ZeroBrave/refs/heads/main/policies.json"
-REQUEST_TIMEOUT = 10  # seconds until the request times out
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -245,32 +242,103 @@ def restore_backup(path: Path) -> bool:
 
 
 def download_json(url: str) -> dict:
-    """
-    Download and parse JSON from a URL.
-    
-    Args:
-        url: URL to download from.
-        
-    Returns:
-        Parsed JSON as a dictionary.
-        
-    Raises:
-        RuntimeError: If download fails.
-    """
-    try:
-        with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT) as resp:
-            if resp.status != 200:
-                raise RuntimeError(f"Download failed: HTTP {resp.status}")
-            data = resp.read()
-        # Strip comments for JSONC support (JSON does not support comments by default)
-        clean_json = strip_json_comments(data.decode("utf-8"))
-        return json.loads(clean_json)
-    except urllib.error.URLError as e:
-        raise RuntimeError(f"Network error: {e.reason}")
-    except urllib.error.HTTPError as e:
-        raise RuntimeError(f"HTTP error {e.code}: {e.reason}")
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Invalid JSON: {e}")
+    return {
+        # ===== AI FEATURES (all disabled, fuck AI) =====
+        "BraveAIChatEnabled": False,
+        "HelpMeWriteSettings": 2,
+        "GeminiSettings": 1,
+        "GenAiDefaultSettings": 2,
+        "GenAiLensOverlaySettings": 2,
+        "GenAILocalFoundationalModelSettings": 1,
+        "LensRegionSearchEnabled": False,
+        "LensDesktopNTPSearchEnabled": False,
+        "LensOverlaySettings": 1,
+        # ===== PRIVACY =====
+        "BlockThirdPartyCookies": True,
+        "PrivacySandboxFingerprintingProtectionEnabled": True,
+        "PrivacySandboxPromptEnabled": False,
+        "PrivacySandboxAdTopicsEnabled": False,
+        "PrivacySandboxSiteEnabledAdsEnabled": False,
+        "PrivacySandboxAdMeasurementEnabled": False,
+        "WebRtcIPHandling": "disable_non_proxied_udp",
+        "WebRtcEventLogCollectionAllowed": False,
+        "DnsOverHttpsMode": "off",
+        # ===== SECURITY =====
+        "SafeBrowsingProtectionLevel": 2,
+        "SafeBrowsingExtendedReportingEnabled": False,
+        "SafeBrowsingSurveysEnabled": False,
+        # ===== TELEMETRY =====
+        "MetricsReportingEnabled": False,
+        "DeviceMetricsReportingEnabled": False,
+        "UrlKeyedAnonymizedDataCollectionEnabled": False,
+        "UrlKeyedMetricsAllowed": False,
+        "CloudProfileReportingEnabled": False,
+        "CloudReportingEnabled": False,
+        "ReportExtensionsAndPluginsData": False,
+        "ReportMachineIDData": False,
+        "ReportPolicyData": False,
+        "ReportUserIDData": False,
+        "ReportVersionData": False,
+        "UserFeedbackAllowed": False,
+        "FeedbackSurveysEnabled": False,
+        # ===== DATA RETENTION =====
+        "UserDataSnapshotRetentionLimit": 0,
+        # ===== PAYMENTS & AUTOFILL =====
+        "PaymentMethodQueryEnabled": False,
+        "AutofillPredictionSettings": 2,
+        "AutofillAddressEnabled": False,
+        "AutofillCreditCardEnabled": False,
+        "PasswordManagerEnabled": False,
+        "PasswordLeakDetectionEnabled": False,
+        "PasswordSharingEnabled": False,
+        # ===== SYNC & ACCOUNT =====
+        "SyncDisabled": True,
+        "BrowserSignin": 0,
+        # ===== MEDIA & RECOMMENDATIONS =====
+        "MediaRecommendationsEnabled": False,
+        "PromotionalTabsEnabled": False,
+        "PromotionsEnabled": False,
+        # ===== NETWORK =====
+        "QuicAllowed": True,
+        "NetworkPredictionOptions": 2,
+        "SearchSuggestEnabled": False,
+        # ===== TOOLS =====
+        "SpellcheckEnabled": False,
+        "SpellCheckServiceEnabled": False,
+        "TranslateEnabled": False,
+        "EnableMediaRouter": False,
+        "ShoppingListEnabled": False,
+        # ===== SYSTEM =====
+        "BackgroundModeEnabled": False,
+        "ComponentUpdatesEnabled": True,
+        "SuppressUnsupportedOSWarning": True,
+        # ===== BRAVE SPECIFIC =====
+        "BraveRewardsDisabled": True,
+        "BraveWalletDisabled": True,
+        "BraveVPNDisabled": 1,
+        "TorDisabled": True,
+        # ===== PERFORMANCE =====
+        "DiskCacheSize": 104857600,
+        "MemorySaverModeSavings": 1,
+        # ===== PERMISSIONS =====
+        "DefaultCookiesSetting": 4,
+        "CookiesSessionOnlyForUrls": ["*"],
+        "DefaultJavaScriptSetting": 1,
+        "DefaultGeolocationSetting": 2,
+        "DefaultNotificationsSetting": 2,
+        "DefaultWebBluetoothGuardSetting": 2,
+        "DefaultWebUsbGuardSetting": 2,
+        "DefaultFileSystemReadGuardSetting": 2,
+        "DefaultFileSystemWriteGuardSetting": 2,
+        "DefaultLocalFontsSetting": 2,
+        "DefaultSensorsSetting": 2,
+        "DefaultSerialGuardSetting": 2,
+        # ===== SEARCH =====
+        "DefaultSearchProviderEnabled": False,
+        # ===== AUTOPLAY =====
+        "AutoplayAllowed": False
+    }
+
 
 
 def load_local_json(path: Path) -> dict:
@@ -527,7 +595,7 @@ def main() -> int:
             policies = load_local_json(args.local)
         else:
             logger.info(f"Downloading policies from: {SOURCE_URL}")
-            policies = download_json(SOURCE_URL)
+            policies = download_json(None)
         
         # Validate policies
         warnings = validate_policies(policies)
